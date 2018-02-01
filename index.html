@@ -19,23 +19,18 @@
     });    
 
     switch(window.orientation){
-            case -90: case 90:
-            document.write('landscape');
-                /* Device is in landscape mode */
-                break; 
-            default:
-            document.write('portrait');
-        }
+        case -90: case 90:
+        document.write('landscape');
+            /* Device is in landscape mode */
+            break; 
+        default:
+        document.write('portrait');
+    }
 
     document.addEventListener("orientationchange", function(event){
-        switch(window.orientation){
-            case -90: case 90:
-            document.write('landscape');
-                /* Device is in landscape mode */
-                break; 
-            default:
-            document.write('portrait');
-        }
+        window.addEventListener("orientationchange", function() {
+            alert("the orientation of the device is now " + screen.orientation.angle);
+        });
     });
 
     function renderPortrait (){
