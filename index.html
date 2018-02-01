@@ -18,10 +18,17 @@
         height: 256,
     });    
 
-    
+    switch(window.orientation){
+            case -90: case 90:
+            document.write('landscape');
+                /* Device is in landscape mode */
+                break; 
+            default:
+            document.write('portrait');
+        }
 
     document.addEventListener("orientationchange", function(event){
-    switch(window.orientation){
+        switch(window.orientation){
             case -90: case 90:
             document.write('landscape');
                 /* Device is in landscape mode */
