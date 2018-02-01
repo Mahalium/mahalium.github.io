@@ -6,7 +6,8 @@
 </head>
    <link rel="stylesheet" href="style.css">
   <script src="pixi.min.js"></script>
-<body>
+<body>    
+  <div id='dvTest'></div>
   <script type="text/javascript">
     let type = "WebGL"
     if(!PIXI.utils.isWebGLSupported()){
@@ -19,16 +20,16 @@
     });    
 
     if(window.innerHeight > window.innerWidth){
-        document.write(window.innerHeight + ' ' + window.innerWidth);
+        document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;
     }else{
-        document.write(window.innerHeight + ' ' + window.innerWidth);
+        document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;                                                                             
     }
 
     function doOnOrientationChange() {
         if(window.innerHeight > window.innerWidth){
-            document.write(window.innerHeight + ' ' + window.innerWidth);
+            document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;
         }else{
-            document.write(window.innerHeight + ' ' + window.innerWidth);
+            document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;                                                                             
         }
     }
 
