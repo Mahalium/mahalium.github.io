@@ -23,11 +23,11 @@
     document.addEventListener("orientationchange", function(event){
     switch(window.orientation){
             case -90: case 90:
-            console.log('landscape');
+            document.write('landscape');
                 /* Device is in landscape mode */
                 break; 
             default:
-            console.log('portrait');
+            document.write('portrait');
         }
     });
 
