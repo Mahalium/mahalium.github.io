@@ -27,11 +27,18 @@
         document.write('portrait');
     }
 
-    document.addEventListener("orientationchange", function(event){
-        window.addEventListener("orientationchange", function() {
-            alert("the orientation of the device is now " + screen.orientation.angle);
-        });
-    });
+    function doOnOrientationChange() {
+        switch(window.orientation) {  
+          case -90 || 90:
+            alert('landscape');
+            break; 
+          default:
+            alert('portrait');
+            break; 
+        }
+    }
+      
+    window.addEventListener('orientationchange', doOnOrientationChange);
 
     function renderPortrait (){
         app.renderer.autoResize = true;
