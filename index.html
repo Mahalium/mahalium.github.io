@@ -18,20 +18,20 @@
         height: 256,
     });    
 
-    if(window.height > window.width){
-        document.write('portrait');
+    if(window.innerHeight > window.innerWidth){
+        document.write(window.innerHeight + ' ' + window.innerWidth);
     }else{
-        document.write('landscape');
+        document.write(window.innerHeight + ' ' + window.innerWidth);
     }
 
     function doOnOrientationChange() {
-        if(window.height > window.width){
-            document.write('portrait');
+        if(window.innerHeight > window.innerWidth){
+            document.write(window.innerHeight + ' ' + window.innerWidth);
         }else{
-            document.write('landscape');
+            document.write(window.innerHeight + ' ' + window.innerWidth);
         }
     }
-    
+
     window.addEventListener('orientationchange', doOnOrientationChange);
 
     function renderPortrait (){
