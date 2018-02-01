@@ -20,16 +20,16 @@
     });    
 
     if(window.innerHeight > window.innerWidth){
-        document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;
+        document.getElementById("dvTest").innerHTML = "portrait";
     }else{
-        document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;
+        document.getElementById("dvTest").innerHTML = "landscape";
     }
 
     function doOnOrientationChange() {
         if(window.innerHeight > window.innerWidth){
-            document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;
+            document.getElementById("dvTest").innerHTML = "portrait";
         }else{
-            document.getElementById("dvTest").innerHTML = window.innerHeight + ' ' + window.innerWidth;
+            document.getElementById("dvTest").innerHTML = "landscape";
         }
     }
 
@@ -44,14 +44,9 @@
         app.renderer.resize(window.innerWidth, window.innerHeight);
         document.body.appendChild(app.view);
     }
+
     function renderLandscape(){
-        app.renderer.autoResize = true;
-        app.renderer.resize(512, 512);
-        app.renderer.view.style.position = "absolute";
-        app.renderer.view.style.display = "block";
-        app.renderer.autoResize = true;
-        app.renderer.resize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(app.view);
+        
     }
   </script>
 </body>
