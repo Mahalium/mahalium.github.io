@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>Hello World</title>
 </head>
-  <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="style.css">
   <script src="pixi.min.js"></script>
 <body>
   <script type="text/javascript">
@@ -18,13 +18,16 @@
         height: 256,
     });    
 
-    document.addEventListener("orientationchange", function(event){
-    switch(window.orientation) 
-    {  
+    switch(window.orientation){
         case -90: case 90:
+            console.log('landscape');
             /* Device is in landscape mode */
             break; 
-        default:        
+        default:
+            console.log('landscape');
+    }
+
+    function renderPortrait (){
         app.renderer.autoResize = true;
         app.renderer.resize(512, 512);
         app.renderer.view.style.position = "absolute";
@@ -32,7 +35,17 @@
         app.renderer.autoResize = true;
         app.renderer.resize(window.innerWidth, window.innerHeight);
         document.body.appendChild(app.view);
-    });
+    }
+    function renderLandscape(){
+        app.renderer.autoResize = true;
+        app.renderer.resize(512, 512);
+        app.renderer.view.style.position = "absolute";
+        app.renderer.view.style.display = "block";
+        app.renderer.autoResize = true;
+        app.renderer.resize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(app.view);
+    }
+
     }
   </script>
 </body>
