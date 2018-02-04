@@ -10,12 +10,6 @@
   
     let type = "WebGL"
     let app = new PIXI.Application();
-    var spTest = document.createElement("span");
-    function showMe(tstString){
-      console.log(tstString);
-      spTest.innerHTML = tstString;
-      document.body.appendChild(spTest);
-    }
 
     if(!PIXI.utils.isWebGLSupported()){
       type = "canvas"
@@ -23,7 +17,6 @@
 
     //Orientation -> behaviour
     function renderPortrait (){
-      console.log("portrait");
         app.renderer.autoresize = true;
         app.renderer.view.style.position = "absolute";
         app.renderer.view.style.display = "block";
@@ -32,14 +25,14 @@
     }
 
     function renderLandscape(){
-      console.log("lscape");
         app.renderer.view.style.position = "absolute";
         app.renderer.view.style.marginLeft = "auto";
         app.renderer.resize(window.innerHeight*.75,window.innerHeight);
         document.body.appendChild(app.view);
     }
 
-    var touchTime;
+    //controls
+    var touchTime = 0;
     var touchLength;
     var touchStart;
     var isTouching = false;
@@ -68,15 +61,15 @@
     var div = document.createElement('div');
     (function() {      
       document.body.appendChild(div);
+      renderPortrait();
       document.body.addEventListener('touchmove',  touch, false)
       document.body.addEventListener('touchstart',  touchStart, false)
       document.body.addEventListener('touchend',  touchEnd, false)
-      renderPortrait();
     })();
     
     //loop
     app.ticker.add(function(delta){
-      div.innerHTML ='Oh, my, youve been touching me for' + Math.round(touchTime) + ' seconds dam. touch start:' + isStartingTouch + ' touch moving: ' + isTouching;
+      div.innerHTML ='Oh, my, you\'ve been touching me for: ' + Math.round(touchTime) + ' seconds dam. touch start:' + isStartingTouch + '. touch moving: ' + isTouching; 
     })
   </script>
 </body>
