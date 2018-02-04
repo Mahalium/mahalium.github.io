@@ -32,17 +32,27 @@
     }
 
     //controls
+    var touchStartPosition = {
+      x: 0,
+      y: 0
+    };
     var touchLength;
     var isTouching = false;
 
     function touchStart(e){
+      touchStartPosition.x = e.touches["0"].clientX; 
+      touchStartPosition.y = e.touches["0"].clientY;
     }
 
     function touch(e){
       isTouching = true;
+      var a = touchStartPosition.x - e.touches["0"].clientX; 
+      var b = ouchStartPosition.y - e.touches["0"].clientY;
+      touchLength = Math.sqrt( a*a + b*b );
     }
 
     function touchEnd(e){
+      touchLength = 0;
       isTouching = false;
     }
 
@@ -68,7 +78,9 @@
       }else{
         touchTime = 0;
       }
-      div.innerHTML ='Oh, my, you\'ve been touching me for: ' + Math.round(touchTime) + ' frames mmmmMMmm. <br/>touching: ' + isTouching; 
+      div.innerHTML ='Oh, my, you\'ve been touching me for: ' + Math.round(touchTime) + 
+                     ' frames mmmmMMmm. <br/>touching: ' + isTouching + 
+                     ' <br/> distance from touch origin: ' + touchLength; 
     })
   </script>
 </body>
