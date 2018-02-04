@@ -36,7 +36,7 @@
       x: 0,
       y: 0
     };
-    var touchLength;
+    var touchLength = 0;
     var isTouching = false;
 
     function touchStart(e){
@@ -47,7 +47,7 @@
     function touch(e){
       isTouching = true;
       var a = touchStartPosition.x - e.touches["0"].clientX; 
-      var b = ouchStartPosition.y - e.touches["0"].clientY;
+      var b = touchStartPosition.y - e.touches["0"].clientY;
       touchLength = Math.sqrt( a*a + b*b );
     }
 
@@ -78,9 +78,8 @@
       }else{
         touchTime = 0;
       }
-      div.innerHTML ='Oh, my, you\'ve been touching me for: ' + Math.round(touchTime) + 
-                     ' frames mmmmMMmm. <br/>touching: ' + isTouching + 
-                     ' <br/> distance from touch origin: ' + touchLength; 
+      div.innerHTML ='<table><tr><td>You\'ve been touching me for: </td><td>' + Math.round(touchTime) + ' frames ;)</td></tr>'+
+                    '<tr><td>distance from touch origin:  </td><td>' + Math.round(touchLength); + '</td></tr></table>'
     })
   </script>
 </body>
