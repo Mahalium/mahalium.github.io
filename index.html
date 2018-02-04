@@ -32,25 +32,17 @@
     }
 
     //controls
-    var touchTime = 0;
     var touchLength;
-    var touchStart;
     var isTouching = false;
-    var isStartingTouch = false;
 
     function touchStart(e){
-      isStartingTouch = true;
-      touchStart = e.timeStamp;
     }
 
     function touch(e){
-        isStartingTouch = false;
-        isTouching = true;
-        touchTime = e.timeStamp - touchStart;
+      isTouching = true;
     }
 
     function touchEnd(e){
-      touchTime = e.timeStamp - touchStart;
       isTouching = false;
     }
 
@@ -69,8 +61,14 @@
     })();
     
     //loop
+    var touchTime = 0;
     app.ticker.add(function(delta){
-      div.innerHTML ='Oh, my, you\'ve been touching me for: ' + Math.round(touchTime) + ' seconds dam. touch start:' + isStartingTouch + '. touch moving: ' + isTouching; 
+      if (isTouching){
+        touchTime += 1;
+      }else{
+        touchTime = 0;
+      }
+      div.innerHTML ='Oh, my, you\'ve been touching me for: ' + Math.round(touchTime) + ' frames mmmmMMmm. <br/>touching: ' + isTouching; 
     })
   </script>
 </body>
