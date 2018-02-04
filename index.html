@@ -6,48 +6,63 @@
 </head>
    <link rel="stylesheet" href="style.css">
   <script src="pixi.min.js"></script>
-<body>    
-  <div id='dvTest'></div>
-  <script type="text/javascript">
+  <script type="text/javascript" >
+  
     let type = "WebGL"
+    let app = new PIXI.Application();
+
+    function showMe(tstString){
+      console.log(tstString);
+    }
+
     if(!PIXI.utils.isWebGLSupported()){
       type = "canvas"
     }
 
-    let app = new PIXI.Application({
-        width: 256, 
-        height: 256,
-    });    
-
-    if(window.innerHeight > window.innerWidth){
-        document.getElementById("dvTest").innerHTML = "portrait";
-    }else{
-        document.getElementById("dvTest").innerHTML = "landscape";
-    }
-
-    function doOnOrientationChange() {
+    //Orientation -> behaviour
+    function orient(portrait, landscape) {
         if(window.innerHeight > window.innerWidth){
-            document.getElementById("dvTest").innerHTML = "portrait";
+          portrait;
         }else{
-            document.getElementById("dvTest").innerHTML = "landscape";
+          landscape;
         }
     }
 
-    window.addEventListener('orientationchange', doOnOrientationChange);
-
     function renderPortrait (){
-        app.renderer.autoResize = true;
-        app.renderer.resize(512, 512);
+        app.renderer.autoresize = true;
         app.renderer.view.style.position = "absolute";
         app.renderer.view.style.display = "block";
-        app.renderer.autoResize = true;
         app.renderer.resize(window.innerWidth, window.innerHeight);
         document.body.appendChild(app.view);
     }
 
     function renderLandscape(){
-        
+        app.renderer.view.style.position = "absolute";
+        app.renderer.view.style.marginLeft = "auto";
+        app.renderer.resize(window.innerHeight*.75,window.innerHeight);
+        document.body.appendChild(app.view);
     }
+
+    //controls
+    function touch(startOrEnd){
+      if (startOrEnd == "start"){
+        showMe("thamoney");
+      }else if (startOrEnd == "end"){
+        showMe("cashout");
+      }
+    }
+
+  </script>
+<body>    
+  <script type="text/javascript">
+
+    (function() {
+      window.addEventListener('ontouchstart', touch("start"));
+      window.addEventListener('ontouchend', touch("end"));
+      window.addEventListener('orientationchange', orient(renderPortrait(), renderLandscape()));
+      orient(renderPortrait(), renderLandscape());
+
+    })();
   </script>
 </body>
 </html>
