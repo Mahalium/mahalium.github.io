@@ -23,7 +23,7 @@
 
     //Orientation -> behaviour
     function orient(portrait, landscape) {
-        if(window.innerHeight > window.innerWidth){
+        if(window.innerHeight < window.innerWidth){
           portrait;
         }else{
           landscape;
@@ -73,7 +73,6 @@
 
     var div = document.createElement('div');
     (function() {      
-      div.innerHTML = "my <b>new</b> skill - <large>DOM maniuplation!</large>";
       document.body.appendChild(div);
       window.addEventListener('orientationchange', orient(renderPortrait(), renderLandscape()));
       document.body.addEventListener('touchmove',  touch, false)
@@ -84,7 +83,7 @@
     
     //loop
     app.ticker.add(function(delta){
-      div.innerHTML ='Oh, my, youve been touching me for' + touchTime + ' seconds dam. touch start:' + isStartingTouch + ' touch moving: ' + isTouching;
+      div.innerHTML ='Oh, my, youve been touching me for' + Math.round(touchTime) + ' seconds dam. touch start:' + isStartingTouch + ' touch moving: ' + isTouching;
     })
   </script>
 </body>
