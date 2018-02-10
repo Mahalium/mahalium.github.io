@@ -160,36 +160,31 @@
           app.stage.addChild(player);
       }
 
-      var moveSpeed = 3;
+      var moveSpeed = 7;
       var direction = 0;
-      var gravity = 7;
+      var gravity = 9.82;
       var jumpCount = 0;
       var playerOrigin = 0;
+      var jumpSpeed = 0;
       const maxJumps = 2;
       const jumpHeight = 100;
-      const jumpSpeed = 10;
 
       function toggleDirection(){
           moveSpeed = -moveSpeed;
       }
       function move(delta){
         var distanceFromLeftWall;
-        distanceFromLeftWall = (leftWall.getBounds().x + leftWall.getBounds().width) - 
-                            (player.getBounds().x + player.getBounds().width);
+        distanceFromLeftWall = (player.getBounds().x - player.getBounds().width) - 
+                              (rightWall.getBounds().x - rightWall.getBounds().width);
+        
         var distanceFromRightWall;
-        distanceFromRightWall = (rightWall.getBounds().x - rightWall.getBounds().width) - 
-                            (player.getBounds().x - player.getBounds().width);
-        showMe(distanceFromLeftWall + '\n' + distanceFromRightWall + '\n' +  collides(player, rightWall) + '\n' + moveSpeed)
+        distanceFromRightWall = (rightWall.getBounds().x) - 
+                            (player.getBounds().x);
+        
         if (collides(player, leftWall) || collides(player, rightWall)) {
           toggleDirection();
-          player.x += moveSpeed;
-        }else{
-          // if (distanceFromLeftWall < moveSpeed || distanceFromRightWall > moveSpeed ){
-          //   //player.x += distanceFromLeftWall;
-          // }else{
-            player.x += moveSpeed;
-          //}
         }
+          player.x += moveSpeed * delta;
       }
     
       function fall(delta){
@@ -208,27 +203,42 @@
       }
 
       function jump(delta){
-        if (jumpCount == 0) {
-          jumpCount += 1;
-          playerOrigin = player.getBounds().y + player.getBounds().height;
-        }
+        player.y -= jumpSpeed * delta;
+        if (isClicking || isTouching){
+          if (jumpCount == 0) {
+            jumpCount += 1;
+            jumpSpeed = 16;
+            playerOrigin = player.getBounds().y + player.getBounds().height;
+          }
 
-        if (jumpCount < 2){
-          if (isClicking || isTouching){
-            gravity = 0;
-            if (playerOrigin - (player.getBounds().y + player.getBounds().height) <= jumpHeight){
-              player.y -= jumpSpeed * delta;
+          if (jumpCount < 2){
+              if (playerOrigin - (player.getBounds().y + player.getBounds().height) <= jumpHeight){
+                jumpSpeed -= 0.5 * delta;
+              }else{
+                jumpCount = 2;
+                if (jumpSpeed > 0) {
+                  jumpSpeed -= 0.5 * delta;
+                }else{
+                  jumpSpeed = 0;
+                }
+              }
             }else{
               jumpCount = 2;
-              gravity = 7;
+              if (jumpSpeed > 0) {
+                jumpSpeed -= 0.5 * delta;
+              }else{
+                jumpSpeed = 0;
+              }
             }
-          }else{
-            gravity = 7;
-          }
         }else {
-          gravity = 7;
+          if (jumpSpeed > 0) {
+            jumpSpeed -= 0.5 * delta;
+          }else{
+            jumpSpeed = 0;
+          }
         }
       }
+
       function collides(a, b){
         var ab = a.getBounds();
         var bb = b.getBounds();
@@ -257,9 +267,8 @@
     //loop
       app.ticker.add(function(delta){
         fall(delta);
-        jump(delta);
         move(delta);
-        //showMe(frameRate());
+        jump(delta);
       })
     //
   </script>
