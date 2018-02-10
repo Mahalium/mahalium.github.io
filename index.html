@@ -68,31 +68,64 @@
   //objects
 
     //controls
-      var touchStartPosition = {
-        x: 0,
-        y: 0
-      };
-      var touchLength = 0;
-      var isTouching = false;
-      var touchFrames = 0;
-      function touchStart(e){
-        touchStartPosition.x = e.touches["0"].clientX; 
-        touchStartPosition.y = e.touches["0"].clientY;
-      }
+      //touching
+        var touchStartPosition = {
+          x: 0,
+          y: 0
+        };
+        var touchLength = 0;
+        var isTouching = false;
+        var touchFrames = 0;
+        function touchStart(e){
+          touchStartPosition.x = e.touches["0"].clientX; 
+          touchStartPosition.y = e.touches["0"].clientY;
+        }
 
-      function touch(e){
-        isTouching = true;
-        touchFrames += 1;
-        var a = touchStartPosition.x - e.touches["0"].clientX; 
-        var b = touchStartPosition.y - e.touches["0"].clientY;
-        touchLength = Math.sqrt( a*a + b*b );
-      }
+        function touch(e){
+          isTouching = true;
+          touchFrames += 1;
+          var a = touchStartPosition.x - e.touches["0"].clientX; 
+          var b = touchStartPosition.y - e.touches["0"].clientY;
+          touchLength = Math.sqrt( a*a + b*b );
+        }
 
-      function touchEnd(e){
-        touchLength = 0;
-        touchFrames = 0;
-        isTouching = false;
-      }
+        function touchEnd(e){
+          touchLength = 0;
+          touchFrames = 0;
+          isTouching = false;
+        }
+      //
+
+      //clicking
+        var clickStartPosition = {
+          x: 0,
+          y: 0
+        };
+        var clickLength = 0;
+        var isClicking = false;
+        var clickFrames = 0;
+        function clickDown(e){
+          clickStartPosition.x = e.clientX;
+          clickStartPosition.y = e.clientY;
+          isClicking = true;
+        }
+
+        function click(e){
+          if (isClicking) {
+            clickFrames += 1;
+            var a = clickStartPosition.x - e.clientX; 
+            var b = clickStartPosition.y - e.clientY;
+            clickLength = Math.sqrt( a*a + b*b );
+          }
+        }
+
+        function clickUp(e){
+          var a = touchStartPosition.x - e.clientX;  
+          var b = touchStartPosition.y - e.clientY;
+          clickLength = Math.sqrt( a*a + b*b );
+          isClicking = false;
+        }
+      //
     //
 
     //floor    
@@ -119,10 +152,11 @@
 
       var gravity = 7;
       var jumpCount = 0;
-      var playerOrigin;
+      var playerOrigin = 0;
       const maxJumps = 2;
-      const jumpHeight = 25;
+      const jumpHeight = 200;
       const jumpSpeed = 10;
+
       function fall(delta){
         var distanceFromFloor;
         distanceFromFloor = (floor.getBounds().y + floor.getBounds().height) - 
@@ -133,19 +167,31 @@
           }else{
             player.y += gravity * delta;
           }
+        }else{
+          jumpCount = 0;
         }
       }
-      function jump(){
-        if (jumpCount = 0) {
+
+      function jump(delta){
+        if (jumpCount == 0) {
+          jumpCount += 1;
           playerOrigin = player.getBounds().y + player.getBounds().height;
         }
+
         if (jumpCount < 2){
-          jumpCount += 1
-          gravity = 0;
-          showMe(player.origin + ' ' + player.getBounds().y + player.getBounds().height)
-          player.y -= jumpSpeed * delta;
+          if (isClicking || isTouching){
+            gravity = 0;
+            showMe(playerOrigin - (player.getBounds().y + player.getBounds().height));
+            if (playerOrigin - (player.getBounds().y + player.getBounds().height) <= jumpHeight){
+              player.y -= jumpSpeed * delta;
+            }else{
+              jumpCount = 2;
+            }
+          }else{
+            gravity = 7;
+          }
         }else {
-          gravity = 10;
+          gravity = 7;
         }
       }
       function collides(a, b){
@@ -163,19 +209,20 @@
         renderPortrait();
         drawFloor();
         drawPlayer();
-        document.body.addEventListener('touchmove',  touch, false)
-        document.body.addEventListener('touchstart',  touchStart, false)
-        document.body.addEventListener('touchend',  touchEnd, false)
+        document.body.addEventListener('touchmove',  touch, false);
+        document.body.addEventListener('touchstart',  touchStart, false);
+        document.body.addEventListener('touchend',  touchEnd, false);
+        document.body.addEventListener('touchmove',  click, false);
+        document.body.addEventListener('mousedown',  clickDown, false);
+        document.body.addEventListener('mouseup',  clickUp, false);
       })();
     //
 
     //loop
       app.ticker.add(function(delta){
         fall(delta);
-        if(isTouching) {
-          jump();
-        }
-        showMe(frameRate());
+        jump(delta);
+        //showMe(frameRate());
       })
     //
   </script>
