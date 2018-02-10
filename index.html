@@ -66,16 +66,6 @@
   //
 
   //objects
-    //floor
-      function drawFloor(){
-          var floor = new PIXI.Graphics();
-          floor.lineStyle(1, 0xffd900, 1);
-          floor.moveTo(0, 900);
-          floor.lineTo(1000, 900);
-          floor.endFill();
-          app.stage.addChild(floor);
-        }
-    //
 
     //controls
       var touchStartPosition = {
@@ -105,8 +95,64 @@
       }
     //
 
-    //player
+    //floor    
+      var floor = new PIXI.Graphics();
+      function drawFloor(){
+          floor.lineStyle(1, 0xffd900, 1);
+          floor.moveTo(0, 900);
+          floor.lineTo(1000, 900);
+          floor.endFill();
+          app.stage.addChild(floor);
+        }
+    //
 
+    //player
+      const player = new PIXI.Graphics();
+      function drawPlayer(){
+          player.beginFill(0xffd900);
+          player.lineStyle(0);
+          player.drawCircle(50, 800, 5);
+          player.endFill();
+          app.stage.addChild(player);
+      }
+
+
+      var gravity = 7;
+      var jumpCount = 0;
+      var playerOrigin;
+      const maxJumps = 2;
+      const jumpHeight = 25;
+      const jumpSpeed = 10;
+      function fall(delta){
+        var distanceFromFloor;
+        distanceFromFloor = (floor.getBounds().y + floor.getBounds().height) - 
+                            (player.getBounds().y + player.getBounds().height);
+        if (!collides(player, floor)) {
+          if (distanceFromFloor < gravity){
+            player.y += distanceFromFloor;
+          }else{
+            player.y += gravity * delta;
+          }
+        }
+      }
+      function jump(){
+        if (jumpCount = 0) {
+          playerOrigin = player.getBounds().y + player.getBounds().height;
+        }
+        if (jumpCount < 2){
+          jumpCount += 1
+          gravity = 0;
+          showMe(player.origin + ' ' + player.getBounds().y + player.getBounds().height)
+          player.y -= jumpSpeed * delta;
+        }else {
+          gravity = 10;
+        }
+      }
+      function collides(a, b){
+        var ab = a.getBounds();
+        var bb = b.getBounds();
+        return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
+      }
     //
   //
   </script>
@@ -116,6 +162,7 @@
       (function() {
         renderPortrait();
         drawFloor();
+        drawPlayer();
         document.body.addEventListener('touchmove',  touch, false)
         document.body.addEventListener('touchstart',  touchStart, false)
         document.body.addEventListener('touchend',  touchEnd, false)
@@ -124,6 +171,10 @@
 
     //loop
       app.ticker.add(function(delta){
+        fall(delta);
+        if(isTouching) {
+          jump();
+        }
         showMe(frameRate());
       })
     //
