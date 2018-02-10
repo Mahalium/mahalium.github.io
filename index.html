@@ -4,113 +4,129 @@
   <meta charset="utf-8">
   <title>touchMe</title>
 </head>
-   <link rel="stylesheet" href="style.css">
-  <script src="pixi.min.js"></script>
+  <inherits>
+    <link rel="stylesheet" href="style.css">
+    <script src="pixi.min.js"></script></inherits>
   <script type="text/javascript" >
-  
-    let type = "WebGL"
-    let app = new PIXI.Application();
-    basicText = new PIXI.Text("", {
-      x: 30,
-      y: 90,
-      fill: "white"
-    });
-
-    if(!PIXI.utils.isWebGLSupported()){
-      type = "canvas"
-    }
+  //config
+    //pixi config
+        let type = "WebGL"
+        let app = new PIXI.Application();
+        basicText = new PIXI.Text("", {
+          x: 30,
+          y: 90,
+          fill: "white"
+        });
+      
+      if(!PIXI.utils.isWebGLSupported()){
+        type = "canvas"
+      }
+    //
 
     //Orientation
-    function renderPortrait (){
-        app.renderer.autoresize = true;
-        app.renderer.view.style.position = "absolute";
-        app.renderer.view.style.display = "block";
-        app.renderer.resize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(app.view);        
-        app.stage.addChild(basicText);
-    }
-
-    //drawing
-    function drawLine(){
-      var graphics = new PIXI.Graphics();
-      graphics.lineStyle(4, 0xffd900, 1);
-      graphics.moveTo(271, 122);
-      graphics.lineTo(99, 88);
-      graphics.endFill();
-      app.stage.addChild(graphics);
-    }
-
-    //controls
-    var touchStartPosition = {
-      x: 0,
-      y: 0
-    };
-    var touchLength = 0;
-    var isTouching = false;
-    var touchFrames = 0;
-    function touchStart(e){
-      touchStartPosition.x = e.touches["0"].clientX; 
-      touchStartPosition.y = e.touches["0"].clientY;
-    }
-
-    function touch(e){
-      isTouching = true;
-      touchFrames += 1;
-      var a = touchStartPosition.x - e.touches["0"].clientX; 
-      var b = touchStartPosition.y - e.touches["0"].clientY;
-      touchLength = Math.sqrt( a*a + b*b );
-    }
-
-    function touchEnd(e){
-      touchLength = 0;
-      touchFrames = 0;
-      isTouching = false;
-    }
+      function renderPortrait (){
+          app.renderer.autoresize = true;
+          app.renderer.view.style.position = "absolute";
+          app.renderer.view.style.display = "block";
+          app.renderer.resize(window.innerWidth, window.innerHeight);
+          document.body.appendChild(app.view);        
+          app.stage.addChild(basicText);
+      }
+    //
 
     //debug
-    function showMe(string){
-      basicText.setText(string);
-    }
+      function showMe(string){
+        basicText.setText(string);
+      }
+    //
 
     //monitoring
-    //looking for 16.6666ms
-    var gameStart;
-    var frameStartTime;
-    var frameElapsedTime;
-    function loadPerformanceGlobals(){
-      gameStart = performance.now();
-      frameStartTime = gameStart;
-    }
+      //looking for 16.6666ms
+      var gameStart;
+      var frameStartTime;
+      var frameElapsedTime;
+      function loadPerformanceGlobals(){
+        gameStart = performance.now();
+        frameStartTime = gameStart;
+      }
 
-    function frameRate(){
-      frameElapsedTime = performance.now() - frameStartTime;
-      var output = frameElapsedTime;
-      frameStartTime = performance.now();
-      return output;
-    }
+      function frameRate(){
+        frameElapsedTime = performance.now() - frameStartTime;
+        var output = frameElapsedTime;
+        frameStartTime = performance.now();
+        return output;
+      }
+    //
 
     //settings
-    function loadGlobals(){
-      loadPerformanceGlobals();
-    }
+      function loadGlobals(){
+        loadPerformanceGlobals();
+      }
+    //
+  //
 
+  //objects
+    //floor
+      function drawFloor(){
+          var floor = new PIXI.Graphics();
+          floor.lineStyle(1, 0xffd900, 1);
+          floor.moveTo(0, 900);
+          floor.lineTo(1000, 900);
+          floor.endFill();
+          app.stage.addChild(floor);
+        }
+    //
+
+    //controls
+      var touchStartPosition = {
+        x: 0,
+        y: 0
+      };
+      var touchLength = 0;
+      var isTouching = false;
+      var touchFrames = 0;
+      function touchStart(e){
+        touchStartPosition.x = e.touches["0"].clientX; 
+        touchStartPosition.y = e.touches["0"].clientY;
+      }
+
+      function touch(e){
+        isTouching = true;
+        touchFrames += 1;
+        var a = touchStartPosition.x - e.touches["0"].clientX; 
+        var b = touchStartPosition.y - e.touches["0"].clientY;
+        touchLength = Math.sqrt( a*a + b*b );
+      }
+
+      function touchEnd(e){
+        touchLength = 0;
+        touchFrames = 0;
+        isTouching = false;
+      }
+    //
+
+    //player
+
+    //
+  //
   </script>
 <body>
   <script type="text/javascript">
-    (function() {
-      renderPortrait();
-      drawLine();
-      document.body.addEventListener('touchmove',  touch, false)
-      document.body.addEventListener('touchstart',  touchStart, false)
-      document.body.addEventListener('touchend',  touchEnd, false)
-    })();
-    
+    //load
+      (function() {
+        renderPortrait();
+        drawFloor();
+        document.body.addEventListener('touchmove',  touch, false)
+        document.body.addEventListener('touchstart',  touchStart, false)
+        document.body.addEventListener('touchend',  touchEnd, false)
+      })();
+    //
+
     //loop
-    var touchTime = 0;
-    
-    app.ticker.add(function(delta){
-      showMe(frameRate());
-    })
+      app.ticker.add(function(delta){
+        showMe(frameRate());
+      })
+    //
   </script>
 </body>
 </html>
