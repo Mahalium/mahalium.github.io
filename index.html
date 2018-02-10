@@ -10,25 +10,34 @@
   
     let type = "WebGL"
     let app = new PIXI.Application();
+    basicText = new PIXI.Text("", {
+      x: 30,
+      y: 90,
+      fill: "white"
+    });
 
     if(!PIXI.utils.isWebGLSupported()){
       type = "canvas"
     }
 
-    //Orientation -> behaviour
+    //Orientation
     function renderPortrait (){
         app.renderer.autoresize = true;
         app.renderer.view.style.position = "absolute";
         app.renderer.view.style.display = "block";
         app.renderer.resize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(app.view);
+        document.body.appendChild(app.view);        
+        app.stage.addChild(basicText);
     }
 
-    function renderLandscape(){
-        app.renderer.view.style.position = "absolute";
-        app.renderer.view.style.marginLeft = "auto";
-        app.renderer.resize(window.innerHeight*.75,window.innerHeight);
-        document.body.appendChild(app.view);
+    //drawing
+    function drawLine(){
+      var graphics = new PIXI.Graphics();
+      graphics.lineStyle(4, 0xffd900, 1);
+      graphics.moveTo(271, 122);
+      graphics.lineTo(99, 88);
+      graphics.endFill();
+      app.stage.addChild(graphics);
     }
 
     //controls
@@ -38,7 +47,7 @@
     };
     var touchLength = 0;
     var isTouching = false;
-
+    var touchFrames = 0;
     function touchStart(e){
       touchStartPosition.x = e.touches["0"].clientX; 
       touchStartPosition.y = e.touches["0"].clientY;
@@ -46,6 +55,7 @@
 
     function touch(e){
       isTouching = true;
+      touchFrames += 1;
       var a = touchStartPosition.x - e.touches["0"].clientX; 
       var b = touchStartPosition.y - e.touches["0"].clientY;
       touchLength = Math.sqrt( a*a + b*b );
@@ -53,18 +63,43 @@
 
     function touchEnd(e){
       touchLength = 0;
+      touchFrames = 0;
       isTouching = false;
     }
 
-  </script>
-<body>    
-  <script type="text/javascript">
+    //debug
+    function showMe(string){
+      basicText.setText(string);
+    }
 
-    var div = document.createElement('div');
-    div.style.fontSize = "25px";
-    (function() {      
-      document.body.appendChild(div);
+    //monitoring
+    //looking for 16.6666ms
+    var gameStart;
+    var frameStartTime;
+    var frameElapsedTime;
+    function loadPerformanceGlobals(){
+      gameStart = performance.now();
+      frameStartTime = gameStart;
+    }
+
+    function frameRate(){
+      frameElapsedTime = performance.now() - frameStartTime;
+      var output = frameElapsedTime;
+      frameStartTime = performance.now();
+      return output;
+    }
+
+    //settings
+    function loadGlobals(){
+      loadPerformanceGlobals();
+    }
+
+  </script>
+<body>
+  <script type="text/javascript">
+    (function() {
       renderPortrait();
+      drawLine();
       document.body.addEventListener('touchmove',  touch, false)
       document.body.addEventListener('touchstart',  touchStart, false)
       document.body.addEventListener('touchend',  touchEnd, false)
@@ -72,14 +107,9 @@
     
     //loop
     var touchTime = 0;
+    
     app.ticker.add(function(delta){
-      if (isTouching){
-        touchTime += 1;
-      }else{
-        touchTime = 0;
-      }
-      div.innerHTML ='<table><tr><td>You\'ve been touching me for: </td><td>' + Math.round(touchTime) + ' frames ;)</td></tr>'+
-                    '<tr><td>distance from touch origin:  </td><td>' + Math.round(touchLength); + '</td></tr></table>'
+      showMe(frameRate());
     })
   </script>
 </body>
