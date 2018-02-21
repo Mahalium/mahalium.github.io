@@ -105,18 +105,17 @@
         var isClicking = false;
         var clickFrames = 0;
         function clickDown(e){
+          jump();
           clickStartPosition.x = e.clientX;
           clickStartPosition.y = e.clientY;
           isClicking = true;
         }
 
         function click(e){
-          if (isClicking) {
-            clickFrames += 1;
-            var a = clickStartPosition.x - e.clientX; 
-            var b = clickStartPosition.y - e.clientY;
-            clickLength = Math.sqrt( a*a + b*b );
-          }
+          clickFrames += 1;
+          var a = clickStartPosition.x - e.clientX; 
+          var b = clickStartPosition.y - e.clientY;
+          clickLength = Math.sqrt( a*a + b*b );
         }
 
         function clickUp(e){
@@ -134,18 +133,18 @@
       var rightWall = new PIXI.Graphics();
       function drawRoom(){
           floor.lineStyle(1, 0xffd900, 1);
-          floor.moveTo(0, 900);
-          floor.lineTo(1000, 900);
+          floor.moveTo(1, 901);
+          floor.lineTo(1001, 901);
           floor.endFill();
           app.stage.addChild(floor);
           leftWall.lineStyle(2, 0xffd900, 1);
-          leftWall.moveTo(100, 900);
-          leftWall.lineTo(100, 100);
+          leftWall.moveTo(101, 901);
+          leftWall.lineTo(101, 101);
           leftWall.endFill();
           app.stage.addChild(leftWall);
           rightWall.lineStyle(2, 0xffd900, 1);
-          rightWall.moveTo(700, 900);
-          rightWall.lineTo(700, 100);
+          rightWall.moveTo(701, 901);
+          rightWall.lineTo(701, 101);
           rightWall.endFill();
           app.stage.addChild(rightWall);
         }
@@ -165,14 +164,12 @@
       var direction = 0;
       var gravity = 9.82;
       var jumpCount = 0;
-      var playerOrigin = 0;
+      var jumpOrigin = 0;
       var jumpSpeed = 0;
       const maxJumps = 2;
       const jumpHeight = 100;
 
-      function toggleDirection(){
-          moveSpeed = -moveSpeed;
-      }
+
       function move(delta){
         var distanceFromLeftWall;
         distanceFromLeftWall = (player.getBounds().x - player.getBounds().width) - 
@@ -183,7 +180,7 @@
                             (player.getBounds().x);
         
         if (collides(player, leftWall) || collides(player, rightWall)) {
-          toggleDirection();
+          moveSpeed = -moveSpeed;
         }
           player.x += moveSpeed * delta;
       }
@@ -192,51 +189,32 @@
         var distanceFromFloor;
         distanceFromFloor = (floor.getBounds().y + floor.getBounds().height) - 
                             (player.getBounds().y + player.getBounds().height);
+
         if (collides(player, floor)) {
-          jumpCount = 0;
-        }else{
-          if (distanceFromFloor < gravity){
-            player.y += distanceFromFloor;
-          }else{
-            player.y += gravity * delta;
+          if (!isClicking){
+            if (distanceFromFloor < gravity){
+              player.y += distanceFromFloor;
+            }
           }
+          jumpCount = 0;
+        }
+
+        if (jumpSpeed > 0) {
+          jumpSpeed -= 0.5
+        }
+
+        if (distanceFromFloor < gravity - jumpSpeed){
+          player.y += distanceFromFloor;
+        }else{
+          player.y += (gravity - jumpSpeed) * delta;
         }
       }
 
-      function jump(delta){
-        player.y -= jumpSpeed * delta;
-        if (isClicking || isTouching){
-          if (jumpCount == 0) {
-            jumpCount += 1;
-            jumpSpeed = 16;
-            playerOrigin = player.getBounds().y + player.getBounds().height;
-          }
-
-          if (jumpCount < 2){
-              if (playerOrigin - (player.getBounds().y + player.getBounds().height) <= jumpHeight){
-                jumpSpeed -= 0.5 * delta;
-              }else{
-                jumpCount = 2;
-                if (jumpSpeed > 0) {
-                  jumpSpeed -= 0.5 * delta;
-                }else{
-                  jumpSpeed = 0;
-                }
-              }
-            }else{
-              jumpCount = 2;
-              if (jumpSpeed > 0) {
-                jumpSpeed -= 0.5 * delta;
-              }else{
-                jumpSpeed = 0;
-              }
-            }
-        }else {
-          if (jumpSpeed > 0) {
-            jumpSpeed -= 0.5 * delta;
-          }else{
-            jumpSpeed = 0;
-          }
+      function jump(){
+        if (jumpCount < 1){
+          jumpSpeed = 16;
+          jumpCount += 1;
+          jumpOrigin = player.getBounds().y + player.getBounds().height;
         }
       }
 
@@ -267,9 +245,9 @@
 
     //loop
       app.ticker.add(function(delta){
+        showMe(gravity - jumpSpeed);
         fall(delta);
         move(delta);
-        jump(delta);
       })
     //
   </script>
