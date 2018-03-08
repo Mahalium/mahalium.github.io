@@ -149,11 +149,27 @@
 
           var platform = new PIXI.Graphics();
           platform.lineStyle(1, 0xffd900, 1);
-          platform.moveTo(200, 750);
-          platform.lineTo(500, 750);
+          platform.moveTo(350, 750);
+          platform.lineTo(450, 750);
           platform.endFill();
           app.stage.addChild(platform);
           platforms.push(platform);
+
+          var platform2 = new PIXI.Graphics();
+          platform2.lineStyle(1, 0xffd900, 1);
+          platform2.moveTo(250, 700);
+          platform2.lineTo(350, 700);
+          platform2.endFill();
+          app.stage.addChild(platform2);
+          platforms.push(platform2);
+
+          var platform3 = new PIXI.Graphics();
+          platform3.lineStyle(1, 0xffd900, 1);
+          platform3.moveTo(280, 600);
+          platform3.lineTo(400, 600);
+          platform3.endFill();
+          app.stage.addChild(platform3);
+          platforms.push(platform3);
 
           leftWall.lineStyle(2, 0xffd900, 1);
           leftWall.moveTo(100, 800);
