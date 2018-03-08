@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>rUGay</title>
+  <title>niceJump</title>
 </head>
   <inherits>
     <link rel="stylesheet" href="style.css">
@@ -40,7 +40,7 @@
       }
     //
 
-    //monitoring
+    //perf monitoring
       //looking for 16.6666ms
       var gameStart;
       var frameStartTime;
@@ -58,12 +58,12 @@
       }
     //
 
-    //settings
+    //load settings
       function loadGlobals(){
         loadPerformanceGlobals();
       }
     //
-  //
+  //`
 
   //objects
 
@@ -77,6 +77,7 @@
         var isTouching = false;
         var touchFrames = 0;
         function touchStart(e){
+          jump();
           isTouching = true;
           touchStartPosition.x = e.touches["0"].clientX; 
           touchStartPosition.y = e.touches["0"].clientY;
@@ -127,24 +128,35 @@
       //
     //
 
-    //floor    
-      var floor = new PIXI.Graphics();
+    //level
+      var platforms =[];
       var leftWall = new PIXI.Graphics();
-      var rightWall = new PIXI.Graphics();
+      var rightWall = new PIXI.Graphics();  
       function drawRoom(){
+          var floor = new PIXI.Graphics();
           floor.lineStyle(1, 0xffd900, 1);
-          floor.moveTo(1, 901);
-          floor.lineTo(1001, 901);
+          floor.moveTo(100, 800);
+          floor.lineTo(700, 800);
           floor.endFill();
           app.stage.addChild(floor);
+          platforms.push(floor);
+
+          var platform = new PIXI.Graphics();
+          platform.lineStyle(1, 0xffd900, 1);
+          platform.moveTo(200, 750);
+          platform.lineTo(500, 750);
+          platform.endFill();
+          app.stage.addChild(platform);
+          platforms.push(platform);
+
           leftWall.lineStyle(2, 0xffd900, 1);
-          leftWall.moveTo(101, 901);
-          leftWall.lineTo(101, 101);
+          leftWall.moveTo(100, 800);
+          leftWall.lineTo(100, 100);
           leftWall.endFill();
           app.stage.addChild(leftWall);
           rightWall.lineStyle(2, 0xffd900, 1);
-          rightWall.moveTo(701, 901);
-          rightWall.lineTo(701, 101);
+          rightWall.moveTo(700, 800);
+          rightWall.lineTo(700, 100);
           rightWall.endFill();
           app.stage.addChild(rightWall);
         }
@@ -155,74 +167,82 @@
       function drawPlayer(){
           player.beginFill(0xffd900);
           player.lineStyle(0);
-          player.drawCircle(300, 800, 5);
+          player.drawCircle(500, 500, 5);
           player.endFill();
           app.stage.addChild(player);
       }
 
       var moveSpeed = 7;
-      var direction = 0;
-      var gravity = 9.82;
-      var jumpCount = 0;
+      var gravity = 0;
+      var jumpCount = 2;
       var jumpOrigin = 0;
       var jumpSpeed = 0;
       const maxJumps = 2;
       const jumpHeight = 100;
 
-
       function move(delta){
-        var distanceFromLeftWall;
-        distanceFromLeftWall = (player.getBounds().x - player.getBounds().width) - 
-                              (rightWall.getBounds().x - rightWall.getBounds().width);
-        
-        var distanceFromRightWall;
-        distanceFromRightWall = (rightWall.getBounds().x) - 
-                            (player.getBounds().x);
-        
         if (collides(player, leftWall) || collides(player, rightWall)) {
           moveSpeed = -moveSpeed;
+          if( jumpCount > 0){
+            jumpCount -= 1;
+          }
         }
-          player.x += moveSpeed * delta;
+        player.x += moveSpeed;
       }
-    
-      function fall(delta){
-        var distanceFromFloor;
-        distanceFromFloor = (floor.getBounds().y + floor.getBounds().height) - 
-                            (player.getBounds().y + player.getBounds().height);
 
-        if (collides(player, floor)) {
-          if (!isClicking){
-            if (distanceFromFloor < gravity){
-              player.y += distanceFromFloor;
+      var isColliding;
+      function fall(delta){
+        player.y += (gravity - jumpSpeed) * delta;
+        for (i = 0; i < platforms.length; i+=1) {
+          if (collides(player,  platforms[i])){
+            isColliding = true;
+            if (distance(player, platforms[i]) < 0){
+              //showMe(distance(player, platforms[i]));
+              //jumpSpeed = 0;
+              player.y -= distance(player, platforms[i]);
+            } else {
+              //showMe(distance(player, platforms[i]));
+              player.y -= distance(player, platforms[i]);
             }
           }
-          jumpCount = 0;
         }
+
+        if(isColliding){
+          gravity = 0;
+          jumpSpeed = 0;
+          jumpCount = 0;
+        } else {
+          if(gravity < 9.82){
+            gravity += (9.82/7);
+          }
+        }
+        isColliding = false;
 
         if (jumpSpeed > 0) {
           jumpSpeed -= 0.5
         }
-
-        if (distanceFromFloor < gravity - jumpSpeed){
-          player.y += distanceFromFloor;
-        }else{
-          player.y += (gravity - jumpSpeed) * delta;
-        }
       }
 
       function jump(){
-        if (jumpCount < 1){
+        if (jumpCount <= 1){
           jumpSpeed = 16;
+          gravity = 9.82;
           jumpCount += 1;
-          jumpOrigin = player.getBounds().y + player.getBounds().height;
         }
       }
 
       function collides(a, b){
         var ab = a.getBounds();
         var bb = b.getBounds();
-        return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
+        return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && 
+               ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
       }
+      function distance(a, b){
+        var aa = a.getBounds();
+        var bb = b.getBounds();
+        return (aa.y + aa.height) - (bb.y + bb.height);
+      }
+
     //
   //
   </script>
@@ -236,7 +256,6 @@
         document.body.addEventListener('touchmove',  touch, false);
         document.body.addEventListener('touchstart',  touchStart, false);
         document.body.addEventListener('touchend',  touchEnd, false);
-
         document.body.addEventListener('clickhmove',  click, false);
         document.body.addEventListener('mousedown',  clickDown, false);
         document.body.addEventListener('mouseup',  clickUp, false);
@@ -245,7 +264,7 @@
 
     //loop
       app.ticker.add(function(delta){
-        showMe(gravity - jumpSpeed);
+        showMe(distance(player, platforms[1]));
         fall(delta);
         move(delta);
       })
