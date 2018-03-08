@@ -15,9 +15,14 @@
         basicText = new PIXI.Text("", {
           x: 30,
           y: 90,
-          fill: "white"
+          fill: 0xffd900
         });
-      
+        title = new PIXI.Text("", {
+          fill: 0xffd900
+        });
+        title.setText("NICEjUMP");
+        title.position.x = 280;
+        title.position.y = 600;
       if(!PIXI.utils.isWebGLSupported()){
         type = "canvas"
       }
@@ -31,6 +36,7 @@
           app.renderer.resize(window.innerWidth, window.innerHeight);
           document.body.appendChild(app.view);        
           app.stage.addChild(basicText);
+          app.stage.addChild(title);
       }
     //
 
@@ -264,7 +270,7 @@
 
     //loop
       app.ticker.add(function(delta){
-        showMe(distance(player, platforms[1]));
+        //showMe(distance(player, platforms[1]));
         fall(delta);
         move(delta);
       })
