@@ -190,29 +190,31 @@
         if (collides(player, leftWall) || collides(player, rightWall)) {
           moveSpeed = -moveSpeed;
           if( jumpCount > 0){
-            jumpCount -= 1;
+            jumpCount = 1;
           }
         }
         player.x += moveSpeed;
       }
 
       var isColliding;
+      var prevPosition = 0.00;
+      var nextPosition = 0.00;
       function fall(delta){
         player.y += (gravity - jumpSpeed) * delta;
         for (i = 0; i < platforms.length; i+=1) {
           if (collides(player,  platforms[i])){
             isColliding = true;
-            if (distance(player, platforms[i]) < 0){
-              //showMe(distance(player, platforms[i]));
-              //jumpSpeed = 0;
-              player.y -= distance(player, platforms[i]);
+            nextPosition = (player.getBounds().y - (gravity - jumpSpeed) * delta);
+            prevPosition = (player.getBounds().y);
+            if (nextPosition - prevPosition > 0){
+              player.y -= (gravity - jumpSpeed) * delta;
+              jumpSpeed = 9.5;
+              isColliding = false;
             } else {
-              //showMe(distance(player, platforms[i]));
               player.y -= distance(player, platforms[i]);
             }
           }
         }
-
         if(isColliding){
           gravity = 0;
           jumpSpeed = 0;
@@ -223,7 +225,8 @@
           }
         }
         isColliding = false;
-
+        nextPosition = 0;
+        prevPosition = 0;
         if (jumpSpeed > 0) {
           jumpSpeed -= 0.5
         }
