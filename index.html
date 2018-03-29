@@ -150,7 +150,7 @@
       [250,350,700,1,1],[280,400,600,1,1],  
       //walls[foot, head, distance]
       [800,100,100,0,1],[800,100,700,0,1],
-      [600,780,250,0,1],[249,250,780,1,1],[600,680,280,0,1]
+      [600,780,250,0,1],[600,680,280,0,1],[740,790,350,0,1],[740,790,460,0,1]
     ];
 
     //level
@@ -170,6 +170,10 @@
               foot.moveTo(lineData[2]+1,lineData[1]);
               foot.lineTo(lineData[2]-1,lineData[1]);
               level.push([foot, 1, 1]);
+              let cap = new PIXI.Graphics();
+              cap.moveTo(lineData[0]+1,lineData[1]);
+              cap.lineTo(lineData[0]-1,lineData[1]);
+              level.push([cap, 1, 1]);
             }
             line.endFill();
             app.stage.addChild(line);
@@ -254,7 +258,7 @@
         var ab = a.getBounds();
         var bb = b.getBounds();
         return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && 
-               ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
+               ab.y + ab.height > bb.y + 2 && ab.y < bb.y + bb.height;
       }
       function distance(a, b){
         var aa = a.getBounds();
