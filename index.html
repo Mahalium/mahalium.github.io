@@ -71,8 +71,7 @@
     //
   //`
 
-  //objects
-
+  //Events
     //controls
       //touching
         var touchStartPosition = {
@@ -133,54 +132,49 @@
         }
       //
     //
+  //
+
+  //objects
+    //platforms or line coords
+    // line = {
+    //   origin,
+    //   end,
+    //   position,
+    //   orientation,
+    //   collides
+    // }
+
+    levelOne = [
+      //platForms [left, right, height, line/wall, collides]
+      [100,700,800,1,1],[350,460,740,1,1],
+      [250,350,700,1,1],[280,400,600,1,1],  
+      //walls[foot, head, distance]
+      [800,100,100,0,1],[800,100,700,0,1],
+      [600,780,250,0,1],[249,250,780,1,1],[600,680,280,0,1]
+    ];
 
     //level
-      var platforms =[];
-      var leftWall = new PIXI.Graphics();
-      var rightWall = new PIXI.Graphics();  
+      var level =[]; 
       function drawRoom(){
-          var floor = new PIXI.Graphics();
-          floor.lineStyle(1, 0xffd900, 1);
-          floor.moveTo(100, 800);
-          floor.lineTo(700, 800);
-          floor.endFill();
-          app.stage.addChild(floor);
-          platforms.push(floor);
-
-          var platform = new PIXI.Graphics();
-          platform.lineStyle(1, 0xffd900, 1);
-          platform.moveTo(350, 750);
-          platform.lineTo(450, 750);
-          platform.endFill();
-          app.stage.addChild(platform);
-          platforms.push(platform);
-
-          var platform2 = new PIXI.Graphics();
-          platform2.lineStyle(1, 0xffd900, 1);
-          platform2.moveTo(250, 700);
-          platform2.lineTo(350, 700);
-          platform2.endFill();
-          app.stage.addChild(platform2);
-          platforms.push(platform2);
-
-          var platform3 = new PIXI.Graphics();
-          platform3.lineStyle(1, 0xffd900, 1);
-          platform3.moveTo(280, 600);
-          platform3.lineTo(400, 600);
-          platform3.endFill();
-          app.stage.addChild(platform3);
-          platforms.push(platform3);
-
-          leftWall.lineStyle(2, 0xffd900, 1);
-          leftWall.moveTo(100, 800);
-          leftWall.lineTo(100, 100);
-          leftWall.endFill();
-          app.stage.addChild(leftWall);
-          rightWall.lineStyle(2, 0xffd900, 1);
-          rightWall.moveTo(700, 800);
-          rightWall.lineTo(700, 100);
-          rightWall.endFill();
-          app.stage.addChild(rightWall);
+          for (i = 0; i < levelOne.length; i+=1) {
+            let lineData = levelOne[i];
+            let line = new PIXI.Graphics();
+            line.lineStyle(1, 0xffd900, 1);
+            if(lineData[3]){
+              line.moveTo(lineData[0], lineData[2]);
+              line.lineTo(lineData[1], lineData[2]);
+            }else{
+              line.moveTo(lineData[2], lineData[0]);
+              line.lineTo(lineData[2], lineData[1]);
+              let foot = new PIXI.Graphics();
+              foot.moveTo(lineData[2]+1,lineData[1]);
+              foot.lineTo(lineData[2]-1,lineData[1]);
+              level.push([foot, 1, 1]);
+            }
+            line.endFill();
+            app.stage.addChild(line);
+            level.push([line, lineData[3], lineData[4]]);
+          }
         }
     //
 
@@ -201,36 +195,35 @@
       var jumpSpeed = 0;
       const maxJumps = 2;
       const jumpHeight = 100;
-
-      function move(delta){
-        if (collides(player, leftWall) || collides(player, rightWall)) {
-          moveSpeed = -moveSpeed;
-          if( jumpCount > 0){
-            jumpCount = 1;
-          }
-        }
-        player.x += moveSpeed;
-      }
-
       var isColliding;
       var prevPosition = 0.00;
       var nextPosition = 0.00;
-      function fall(delta){
+
+      function play(delta){
+        player.x += moveSpeed;
         player.y += (gravity - jumpSpeed) * delta;
-        for (i = 0; i < platforms.length; i+=1) {
-          if (collides(player,  platforms[i])){
-            isColliding = true;
-            nextPosition = (player.getBounds().y - (gravity - jumpSpeed) * delta);
-            prevPosition = (player.getBounds().y);
-            if (nextPosition - prevPosition > 0){
-              player.y -= (gravity - jumpSpeed) * delta;
-              jumpSpeed = 9.5;
-              isColliding = false;
-            } else {
-              player.y -= distance(player, platforms[i]);
+        for (i = 0; i < level.length; i+=1) {
+          if (collides(player,  level[i][0])){  
+            if(level[i][1]){
+              isColliding = true;
+              nextPosition = (player.getBounds().y - (gravity - jumpSpeed) * delta);
+              prevPosition = (player.getBounds().y);
+              if (nextPosition - prevPosition > 0){
+                player.y -= (gravity - jumpSpeed) * delta;
+                jumpSpeed = 9.5;
+                isColliding = false;
+              } else {
+                player.y -= distance(player, level[i][0]);
+              }
+            }else{
+              moveSpeed = -moveSpeed;
+              if( jumpCount > 0){
+                jumpCount = 1;
+              }
             }
           }
         }
+
         if(isColliding){
           gravity = 0;
           jumpSpeed = 0;
@@ -240,12 +233,13 @@
             gravity += (9.82/7);
           }
         }
-        isColliding = false;
-        nextPosition = 0;
-        prevPosition = 0;
         if (jumpSpeed > 0) {
           jumpSpeed -= 0.5
         }
+
+        isColliding = false;
+        nextPosition = 0;
+        prevPosition = 0;
       }
 
       function jump(){
@@ -289,9 +283,7 @@
 
     //loop
       app.ticker.add(function(delta){
-        //showMe(distance(player, platforms[1]));
-        fall(delta);
-        move(delta);
+        play(delta);
       })
     //
   </script>
