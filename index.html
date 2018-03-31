@@ -34,7 +34,7 @@
           app.renderer.view.style.position = "absolute";
           app.renderer.view.style.display = "block";
           app.renderer.resize(window.innerWidth, window.innerHeight);
-          document.body.appendChild(app.view);        
+          document.body.appendChild(app.view);
           app.stage.addChild(basicText);
           app.stage.addChild(title);
       }
@@ -134,23 +134,13 @@
     //
   //
 
-  //objects
-    //platforms or line coords
-    // line = {
-    //   origin,
-    //   end,
-    //   position,
-    //   orientation,
-    //   collides
-    // }
-
     levelOne = [
       //platForms [left, right, height, line/wall, collides]
       [100,700,800,1,1],[350,460,740,1,1],
       [250,350,700,1,1],[280,400,600,1,1],  
-      //walls[foot, head, distance]
+      //walls[foot, head, distance from left wall]
       [800,100,100,0,1],[800,100,700,0,1],
-      [600,780,250,0,1],[600,680,280,0,1],[740,790,350,0,1],[740,790,460,0,1]
+      [600,780,250,0,1],[600,680,280,0,1],[741,790,350,0,1],[741,790,460,0,1]
     ];
 
     //level
@@ -200,8 +190,8 @@
       const maxJumps = 2;
       const jumpHeight = 100;
       var isColliding;
-      var prevPosition = 0.00;
-      var nextPosition = 0.00;
+      var prevPosition = 0.0000;
+      var nextPosition = 0.0000;
 
       function play(delta){
         player.x += moveSpeed;
@@ -258,7 +248,7 @@
         var ab = a.getBounds();
         var bb = b.getBounds();
         return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && 
-               ab.y + ab.height > bb.y + 2 && ab.y < bb.y + bb.height;
+               ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
       }
       function distance(a, b){
         var aa = a.getBounds();
@@ -287,6 +277,7 @@
 
     //loop
       app.ticker.add(function(delta){
+        showMe(frameRate());
         play(delta);
       })
     //
