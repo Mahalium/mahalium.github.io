@@ -17,12 +17,22 @@
     y: 90,
     fill: 0xffd900
   });
+
   title = new PIXI.Text("", {
     fill: 0xffd900
   });
   title.setText("NICEjUMP");
   title.position.x = 280;
   title.position.y = 600;
+
+  bait = new PIXI.Text("", {
+    fontSize: 20,
+    fill: 0xffd900
+  });
+  bait.setText("^ HIT ^ IT ^");
+  bait.position.x = 533;
+  bait.position.y = 190;
+
   if(!PIXI.utils.isWebGLSupported()){
     type = "canvas"
   }
@@ -36,6 +46,7 @@
       document.body.appendChild(app.view);
       app.stage.addChild(basicText);
       app.stage.addChild(title);
+      app.stage.addChild(bait);
   }
 
   //debug
@@ -54,7 +65,11 @@
   var isTouching = false;
   var touchFrames = 0;
   function touchStart(e) {
-    jump();
+    if (won = 0){
+      jump();
+    }else{
+      restart();
+    }
     isTouching = true;
     touchStartPosition.x = e.touches["0"].clientX;
     touchStartPosition.y = e.touches["0"].clientY;
@@ -82,7 +97,11 @@
   var isClicking = false;
   var clickFrames = 0;
   function clickDown(e) {
-    jump();
+    if (won == 0){
+      jump();
+    }else{
+      restart();
+    }
     clickStartPosition.x = e.clientX;
     clickStartPosition.y = e.clientY;
     isClicking = true;
@@ -101,25 +120,63 @@
     clickLength = Math.sqrt( a*a + b*b );
     isClicking = false;
   }
+  var won = 0;
+  function win(){
+    won = 1;
+    if(moveSpeed > 0){
+      moveSpeed -= 0.5;
+    }
+    bait.setText("DANG, NICE JUMPS!\n CLICK TO RESTART");
+    bait.position.x = 490;
+    bait.position.y = 190;
+  }
+  function restart(){
+    if(moveSpeed == 0){
+      won = 0;
+      moveSpeed = 7;
+      player.x = -250;
+      player.y = 550;
+      bait.setText("^ HIT ^ IT ^");
+      bait.position.x = 533;
+      bait.position.y = 190;
+    }
+  }
+  /*
+  line types
+  0: platform
+  1: wall
 
+  line functions
+  1: collide,
+  2: victory
+
+  */
   levelOne = [
-    //platForms [left, right, height, line/wall, collides]
+    //platForms [left, right, height, type, function]
     [100,700,800,1,1],[350,460,740,1,1],
     [250,350,700,1,1],[280,407,600,1,1],
+    [100,175,600,1,1],[140,210,700,1,1],
     [200,250,750,1,1],[407,700,700,1,1],
     [100,150,750,1,1],[475,625,650,1,1],
     [475,625,600,1,1],[200,600,550,1,1],
-    [240,200,510,1,1],[270,280,510,1,1],
-    [100,240,300,1,1],[270,650,350,1,1],
-    [400,700,500,1,1],[270,600,450,1,1],
-    [400,700,400,1,1],
+    [140,200,450,1,1],[240,200,510,1,1],
+    [130,240,300,1,1],[270,650,350,1,1],
+    [350,700,500,1,1],[270,600,450,1,1],
+    [325,700,400,1,1],[150,100,350,1,1],
+    [450,550,300,1,1],[300,410,260,1,1],
+    [100,250,200,1,1],[400,450,200,1,1],
+    [540,630,180,1,2],[270,280,510,1,1],
+    [100,700,100,1,1],
     //walls[foot, head, distance from left wall]
     [800,100,100,0,1],[800,100,700,0,1],
     [600,800,250,0,1],[600,680,280,0,1],
     [741,790,350,0,1],[741,790,460,0,1],
     [600,700,407,0,1],[550,510,200,0,1],
     [550,540,600,0,1],[510,300,270,0,1],
-    [510,300,240,0,1]
+    [510,300,240,0,1],[280,320,130,0,1],
+    [400,390,600,0,1],[450,440,400,0,1],
+    [450,410,140,0,1],[450,410,200,0,1],
+    [180,150,540,0,1],[180,150,630,0,1]
   ];
 
   //level
@@ -155,7 +212,7 @@
   function drawPlayer() {
       player.beginFill(0xffd900);
       player.lineStyle(0);
-      player.drawCircle(300, 700, 5);
+      player.drawCircle(300,700,5);
       player.endFill();
       app.stage.addChild(player);
   }
@@ -177,6 +234,12 @@
     for (i = 0; i < level.length; i+=1) {
       if (collides(player,  level[i][0])){
         if(level[i][1]){
+          if(level[i][2] == 2){
+            win();
+          }
+          else{
+            won = 0;
+          }
           isColliding = true;
           nextPosition = (player.getBounds().y - (gravity - jumpSpeed) * delta);
           prevPosition = (player.getBounds().y);
@@ -251,7 +314,7 @@
 
     //loop
     app.ticker.add(function(delta) {
-      showMe(1 / app.ticker.FPS * 1000 + " ms");
+      //showMe(1 / app.ticker.FPS * 1000 + " ms");
       play(delta);
     });
   </script>
