@@ -105,10 +105,21 @@
   levelOne = [
     //platForms [left, right, height, line/wall, collides]
     [100,700,800,1,1],[350,460,740,1,1],
-    [250,350,700,1,1],[280,400,600,1,1],
+    [250,350,700,1,1],[280,407,600,1,1],
+    [200,250,750,1,1],[407,700,700,1,1],
+    [100,150,750,1,1],[475,625,650,1,1],
+    [475,625,600,1,1],[200,600,550,1,1],
+    [240,200,510,1,1],[270,280,510,1,1],
+    [100,240,300,1,1],[270,650,350,1,1],
+    [400,700,500,1,1],[270,600,450,1,1],
+    [400,700,400,1,1],
     //walls[foot, head, distance from left wall]
     [800,100,100,0,1],[800,100,700,0,1],
-    [600,780,250,0,1],[600,680,280,0,1],[741,790,350,0,1],[741,790,460,0,1]
+    [600,800,250,0,1],[600,680,280,0,1],
+    [741,790,350,0,1],[741,790,460,0,1],
+    [600,700,407,0,1],[550,510,200,0,1],
+    [550,540,600,0,1],[510,300,270,0,1],
+    [510,300,240,0,1]
   ];
 
   //level
@@ -125,12 +136,12 @@
         line.moveTo(lineData[2], lineData[0]);
         line.lineTo(lineData[2], lineData[1]);
         let foot = new PIXI.Graphics();
-        foot.moveTo(lineData[2]+1,lineData[1]);
-        foot.lineTo(lineData[2]-1,lineData[1]);
+        foot.moveTo(lineData[2]+.5,lineData[1]);
+        foot.lineTo(lineData[2]-.5,lineData[1]);
         level.push([foot, 1, 1]);
         let cap = new PIXI.Graphics();
-        cap.moveTo(lineData[0]+1,lineData[1]);
-        cap.lineTo(lineData[0]-1,lineData[1]);
+        cap.moveTo(lineData[2]+1,lineData[0]);
+        cap.lineTo(lineData[2]-1,lineData[0]);
         level.push([cap, 1, 1]);
       }
       line.endFill();
@@ -144,7 +155,7 @@
   function drawPlayer() {
       player.beginFill(0xffd900);
       player.lineStyle(0);
-      player.drawCircle(500, 500, 5);
+      player.drawCircle(300, 700, 5);
       player.endFill();
       app.stage.addChild(player);
   }
@@ -240,7 +251,7 @@
 
     //loop
     app.ticker.add(function(delta) {
-      showMe(1 / app.ticker.FPS * 1000 + " ms")
+      showMe(1 / app.ticker.FPS * 1000 + " ms");
       play(delta);
     });
   </script>
