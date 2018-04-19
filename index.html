@@ -9,234 +9,201 @@
     <script src="pixi.min.js"></script></inherits>
   <script type="text/javascript" >
   //config
-    //pixi config
-        let type = "WebGL"
-        let app = new PIXI.Application();
-        basicText = new PIXI.Text("", {
-          x: 30,
-          y: 90,
-          fill: 0xffd900
-        });
-        title = new PIXI.Text("", {
-          fill: 0xffd900
-        });
-        title.setText("NICEjUMP");
-        title.position.x = 280;
-        title.position.y = 600;
-      if(!PIXI.utils.isWebGLSupported()){
-        type = "canvas"
-      }
-    //
+  //pixi config
+  let type = "WebGL"
+  let app = new PIXI.Application();
+  basicText = new PIXI.Text("", {
+    x: 30,
+    y: 90,
+    fill: 0xffd900
+  });
+  title = new PIXI.Text("", {
+    fill: 0xffd900
+  });
+  title.setText("NICEjUMP");
+  title.position.x = 280;
+  title.position.y = 600;
+  if(!PIXI.utils.isWebGLSupported()){
+    type = "canvas"
+  }
 
-    //Orientation
-      function renderPortrait (){
-          app.renderer.autoresize = true;
-          app.renderer.view.style.position = "absolute";
-          app.renderer.view.style.display = "block";
-          app.renderer.resize(window.innerWidth, window.innerHeight);
-          document.body.appendChild(app.view);
-          app.stage.addChild(basicText);
-          app.stage.addChild(title);
-      }
-    //
+  //Orientation
+  function renderPortrait (){
+      app.renderer.autoresize = true;
+      app.renderer.view.style.position = "absolute";
+      app.renderer.view.style.display = "block";
+      app.renderer.resize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(app.view);
+      app.stage.addChild(basicText);
+      app.stage.addChild(title);
+  }
 
-    //debug
-      function showMe(string){
-        basicText.setText(string);
-      }
-    //
-
-    //perf monitoring
-      //looking for 16.6666ms
-      var gameStart;
-      var frameStartTime;
-      var frameElapsedTime;
-      function loadPerformanceGlobals(){
-        gameStart = performance.now();
-        frameStartTime = gameStart;
-      }
-
-      function frameRate(){
-        frameElapsedTime = performance.now() - frameStartTime;
-        var output = frameElapsedTime;
-        frameStartTime = performance.now();
-        return output;
-      }
-    //
-
-    //load settings
-      function loadGlobals(){
-        loadPerformanceGlobals();
-      }
-    //
-  //`
+  //debug
+  function showMe(string) {
+    basicText.setText(string);
+  }
 
   //Events
-    //controls
-      //touching
-        var touchStartPosition = {
-          x: 0,
-          y: 0
-        };
-        var touchLength = 0;
-        var isTouching = false;
-        var touchFrames = 0;
-        function touchStart(e){
-          jump();
-          isTouching = true;
-          touchStartPosition.x = e.touches["0"].clientX; 
-          touchStartPosition.y = e.touches["0"].clientY;
-        }
+  //controls
+  //touching
+  var touchStartPosition = {
+    x: 0,
+    y: 0
+  };
+  var touchLength = 0;
+  var isTouching = false;
+  var touchFrames = 0;
+  function touchStart(e) {
+    jump();
+    isTouching = true;
+    touchStartPosition.x = e.touches["0"].clientX;
+    touchStartPosition.y = e.touches["0"].clientY;
+  }
 
-        function touch(e){
-          touchFrames += 1;
-          var a = touchStartPosition.x - e.touches["0"].clientX; 
-          var b = touchStartPosition.y - e.touches["0"].clientY;
-          touchLength = Math.sqrt( a*a + b*b );
-        }
+  function touch(e) {
+    touchFrames += 1;
+    var a = touchStartPosition.x - e.touches["0"].clientX;
+    var b = touchStartPosition.y - e.touches["0"].clientY;
+    touchLength = Math.sqrt( a*a + b*b );
+  }
 
-        function touchEnd(e){
-          touchLength = 0;
-          touchFrames = 0;
-          isTouching = false;
-        }
-      //
+  function touchEnd(e) {
+    touchLength = 0;
+    touchFrames = 0;
+    isTouching = false;
+  }
 
-      //clicking
-        var clickStartPosition = {
-          x: 0,
-          y: 0
-        };
-        var clickLength = 0;
-        var isClicking = false;
-        var clickFrames = 0;
-        function clickDown(e){
-          jump();
-          clickStartPosition.x = e.clientX;
-          clickStartPosition.y = e.clientY;
-          isClicking = true;
-        }
+  //clicking
+  var clickStartPosition = {
+    x: 0,
+    y: 0
+  };
+  var clickLength = 0;
+  var isClicking = false;
+  var clickFrames = 0;
+  function clickDown(e) {
+    jump();
+    clickStartPosition.x = e.clientX;
+    clickStartPosition.y = e.clientY;
+    isClicking = true;
+  }
 
-        function click(e){
-          clickFrames += 1;
-          var a = clickStartPosition.x - e.clientX; 
-          var b = clickStartPosition.y - e.clientY;
-          clickLength = Math.sqrt( a*a + b*b );
-        }
+  function click(e) {
+    clickFrames += 1;
+    var a = clickStartPosition.x - e.clientX;
+    var b = clickStartPosition.y - e.clientY;
+    clickLength = Math.sqrt( a*a + b*b );
+  }
 
-        function clickUp(e){
-          var a = touchStartPosition.x - e.clientX;  
-          var b = touchStartPosition.y - e.clientY;
-          clickLength = Math.sqrt( a*a + b*b );
-          isClicking = false;
-        }
-      //
-    //
-  //
+  function clickUp(e) {
+    var a = touchStartPosition.x - e.clientX;
+    var b = touchStartPosition.y - e.clientY;
+    clickLength = Math.sqrt( a*a + b*b );
+    isClicking = false;
+  }
 
-    levelOne = [
-      //platForms [left, right, height, line/wall, collides]
-      [100,700,800,1,1],[350,460,740,1,1],
-      [250,350,700,1,1],[280,400,600,1,1],  
-      //walls[foot, head, distance from left wall]
-      [800,100,100,0,1],[800,100,700,0,1],
-      [600,780,250,0,1],[600,680,280,0,1],[741,790,350,0,1],[741,790,460,0,1]
-    ];
+  levelOne = [
+    //platForms [left, right, height, line/wall, collides]
+    [100,700,800,1,1],[350,460,740,1,1],
+    [250,350,700,1,1],[280,400,600,1,1],
+    //walls[foot, head, distance from left wall]
+    [800,100,100,0,1],[800,100,700,0,1],
+    [600,780,250,0,1],[600,680,280,0,1],[741,790,350,0,1],[741,790,460,0,1]
+  ];
 
-    //level
-      var level =[]; 
-      function drawRoom(){
-          for (i = 0; i < levelOne.length; i+=1) {
-            let lineData = levelOne[i];
-            let line = new PIXI.Graphics();
-            line.lineStyle(1, 0xffd900, 1);
-            if(lineData[3]){
-              line.moveTo(lineData[0], lineData[2]);
-              line.lineTo(lineData[1], lineData[2]);
-            }else{
-              line.moveTo(lineData[2], lineData[0]);
-              line.lineTo(lineData[2], lineData[1]);
-              let foot = new PIXI.Graphics();
-              foot.moveTo(lineData[2]+1,lineData[1]);
-              foot.lineTo(lineData[2]-1,lineData[1]);
-              level.push([foot, 1, 1]);
-              let cap = new PIXI.Graphics();
-              cap.moveTo(lineData[0]+1,lineData[1]);
-              cap.lineTo(lineData[0]-1,lineData[1]);
-              level.push([cap, 1, 1]);
-            }
-            line.endFill();
-            app.stage.addChild(line);
-            level.push([line, lineData[3], lineData[4]]);
-          }
-        }
-    //
-
-    //player
-      const player = new PIXI.Graphics();
-      function drawPlayer(){
-          player.beginFill(0xffd900);
-          player.lineStyle(0);
-          player.drawCircle(500, 500, 5);
-          player.endFill();
-          app.stage.addChild(player);
+  //level
+  var level =[];
+  function drawRoom() {
+    for (i = 0; i < levelOne.length; i+=1) {
+      let lineData = levelOne[i];
+      let line = new PIXI.Graphics();
+      line.lineStyle(1, 0xffd900, 1);
+      if(lineData[3]){
+        line.moveTo(lineData[0], lineData[2]);
+        line.lineTo(lineData[1], lineData[2]);
+      }else{
+        line.moveTo(lineData[2], lineData[0]);
+        line.lineTo(lineData[2], lineData[1]);
+        let foot = new PIXI.Graphics();
+        foot.moveTo(lineData[2]+1,lineData[1]);
+        foot.lineTo(lineData[2]-1,lineData[1]);
+        level.push([foot, 1, 1]);
+        let cap = new PIXI.Graphics();
+        cap.moveTo(lineData[0]+1,lineData[1]);
+        cap.lineTo(lineData[0]-1,lineData[1]);
+        level.push([cap, 1, 1]);
       }
+      line.endFill();
+      app.stage.addChild(line);
+      level.push([line, lineData[3], lineData[4]]);
+    }
+  }
 
-      var moveSpeed = 7;
-      var gravity = 0;
-      var jumpCount = 2;
-      var jumpOrigin = 0;
-      var jumpSpeed = 0;
-      const maxJumps = 2;
-      const jumpHeight = 100;
-      var isColliding;
-      var prevPosition = 0.0000;
-      var nextPosition = 0.0000;
+  //player
+  const player = new PIXI.Graphics();
+  function drawPlayer() {
+      player.beginFill(0xffd900);
+      player.lineStyle(0);
+      player.drawCircle(500, 500, 5);
+      player.endFill();
+      app.stage.addChild(player);
+  }
 
-      function play(delta){
-        player.x += moveSpeed;
-        player.y += (gravity - jumpSpeed) * delta;
-        for (i = 0; i < level.length; i+=1) {
-          if (collides(player,  level[i][0])){  
-            if(level[i][1]){
-              isColliding = true;
-              nextPosition = (player.getBounds().y - (gravity - jumpSpeed) * delta);
-              prevPosition = (player.getBounds().y);
-              if (nextPosition - prevPosition > 0){
-                player.y -= (gravity - jumpSpeed) * delta;
-                jumpSpeed = 9.5;
-                isColliding = false;
-              } else {
-                player.y -= distance(player, level[i][0]);
-              }
-            }else{
-              moveSpeed = -moveSpeed;
-              if( jumpCount > 0){
-                jumpCount = 1;
-              }
-            }
+  var moveSpeed = 7;
+  var gravity = 0;
+  var jumpCount = 2;
+  var jumpOrigin = 0;
+  var jumpSpeed = 0;
+  const maxJumps = 2;
+  const jumpHeight = 100;
+  var isColliding;
+  var prevPosition = 0.0000;
+  var nextPosition = 0.0000;
+
+  function play(delta) {
+    player.x += moveSpeed;
+    player.y += (gravity - jumpSpeed) * delta;
+    for (i = 0; i < level.length; i+=1) {
+      if (collides(player,  level[i][0])){
+        if(level[i][1]){
+          isColliding = true;
+          nextPosition = (player.getBounds().y - (gravity - jumpSpeed) * delta);
+          prevPosition = (player.getBounds().y);
+          if (nextPosition - prevPosition > 0){
+            player.y -= (gravity - jumpSpeed) * delta;
+            jumpSpeed = 9.5;
+            isColliding = false;
+          } else {
+            player.y -= distance(player, level[i][0]);
+          }
+        }else{
+          moveSpeed = -moveSpeed;
+          if( jumpCount > 0){
+            jumpCount = 1;
           }
         }
+      }
+    }
 
-        if(isColliding){
-          gravity = 0;
-          jumpSpeed = 0;
-          jumpCount = 0;
-        } else {
-          if(gravity < 9.82){
-            gravity += (9.82/7);
-          }
-        }
-        if (jumpSpeed > 0) {
-          jumpSpeed -= 0.5
-        }
+    if (isColliding) {
+      gravity = 0;
+      jumpSpeed = 0;
+      jumpCount = 0;
+    } else {
+      if(gravity < 9.82){
+        gravity += (9.82/7);
+      }
+    }
+    if (jumpSpeed > 0) {
+      jumpSpeed -= 0.5
+    }
 
         isColliding = false;
         nextPosition = 0;
         prevPosition = 0;
       }
 
-      function jump(){
+      function jump() {
         if (jumpCount <= 1){
           jumpSpeed = 16;
           gravity = 9.82;
@@ -244,43 +211,38 @@
         }
       }
 
-      function collides(a, b){
-        var ab = a.getBounds();
-        var bb = b.getBounds();
-        return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && 
-               ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
-      }
-      function distance(a, b){
-        var aa = a.getBounds();
-        var bb = b.getBounds();
-        return (aa.y + aa.height) - (bb.y + bb.height);
-      }
-
-    //
-  //
+  function collides(a, b) {
+    var ab = a.getBounds();
+    var bb = b.getBounds();
+    return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width &&
+           ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
+  }
+  function distance(a, b) {
+    var aa = a.getBounds();
+    var bb = b.getBounds();
+    return (aa.y + aa.height) - (bb.y + bb.height);
+  }
   </script>
 <body>
   <script type="text/javascript">
     //load
-      (function() {
-        renderPortrait();
-        drawRoom();
-        drawPlayer();
-        document.body.addEventListener('touchmove',  touch, false);
-        document.body.addEventListener('touchstart',  touchStart, false);
-        document.body.addEventListener('touchend',  touchEnd, false);
-        document.body.addEventListener('clickhmove',  click, false);
-        document.body.addEventListener('mousedown',  clickDown, false);
-        document.body.addEventListener('mouseup',  clickUp, false);
-      })();
-    //
+    (function() {
+      renderPortrait();
+      drawRoom();
+      drawPlayer();
+      document.body.addEventListener('touchmove',  touch, false);
+      document.body.addEventListener('touchstart',  touchStart, false);
+      document.body.addEventListener('touchend',  touchEnd, false);
+      document.body.addEventListener('clickhmove',  click, false);
+      document.body.addEventListener('mousedown',  clickDown, false);
+      document.body.addEventListener('mouseup',  clickUp, false);
+    })();
 
     //loop
-      app.ticker.add(function(delta){
-        showMe(frameRate());
-        play(delta);
-      })
-    //
+    app.ticker.add(function(delta) {
+      showMe(1 / app.ticker.FPS * 1000 + " ms")
+      play(delta);
+    });
   </script>
 </body>
 </html>
